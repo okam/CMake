@@ -49,6 +49,7 @@ cmExtraCodeBlocksGenerator::GetFactory()
 #if defined(_WIN32)
     factory.AddSupportedGlobalGenerator("MinGW Makefiles");
     factory.AddSupportedGlobalGenerator("NMake Makefiles");
+    factory.AddSupportedGlobalGenerator("NMake Makefiles JOM");
 // disable until somebody actually tests it:
 // this->AddSupportedGlobalGenerator("MSYS Makefiles");
 #endif
@@ -743,7 +744,7 @@ std::string cmExtraCodeBlocksGenerator::BuildMakeCommand(
   }
 
   std::string generator = this->GlobalGenerator->GetName();
-  if (generator == "NMake Makefiles") {
+  if (generator == "NMake Makefiles" || generator == "NMake Makefiles JOM") {
     // For Windows ConvertToOutputPath already adds quotes when required.
     // These need to be escaped, see
     // https://gitlab.kitware.com/cmake/cmake/issues/13952
