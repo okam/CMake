@@ -4419,9 +4419,9 @@ bool cmGeneratorTarget::ComputeOutputDir(const std::string& config,
 
   // The generator may add the configuration's subdirectory.
   if (!conf.empty()) {
-    bool iosPlatform = this->Makefile->PlatformIsAppleIos();
+    bool isXcode = this->Makefile->IsOn("XCODE");
     std::string suffix =
-      usesDefaultOutputDir && iosPlatform ? "${EFFECTIVE_PLATFORM_NAME}" : "";
+      usesDefaultOutputDir && isXcode ? "${EFFECTIVE_PLATFORM_NAME}" : "";
     this->LocalGenerator->GetGlobalGenerator()->AppendDirectoryForConfig(
       "/", conf, suffix, out);
   }
