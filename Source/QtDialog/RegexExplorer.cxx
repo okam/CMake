@@ -119,6 +119,8 @@ void RegexExplorer::on_matchNumber_currentIndexChanged(int index)
 
 void RegexExplorer::on_matchAll_toggled(bool checked)
 {
+  Q_UNUSED(checked);
+
   on_inputText_textChanged();
 }
 
