@@ -2184,6 +2184,22 @@ bool cmMakefile::PlatformIsAppleIos() const
   return false;
 }
 
+bool cmMakefile::ShouldEmitEffectivePlatformName() const
+{
+  bool isXcode = this->IsOn("XCODE");
+  if (!isXcode) {
+    return false;
+  }
+
+  const char* xcodeVersion = this->GetDefinition("XCODE_VERSION");
+  if (!xcodeVersion ||
+      cmSystemTools::VersionCompareGreater("5", xcodeVersion)) {
+    return false;
+  }
+
+  return true;
+}
+
 const char* cmMakefile::GetSONameFlag(const std::string& language) const
 {
   std::string name = "CMAKE_SHARED_LIBRARY_SONAME";

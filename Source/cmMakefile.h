@@ -427,6 +427,9 @@ public:
   /** Return whether the target platform is Apple iOS.  */
   bool PlatformIsAppleIos() const;
 
+  /** Return whether the generator should use EFFECTIVE_PLATFORM_NAME.  */
+  bool ShouldEmitEffectivePlatformName() const;
+
   /** Retrieve soname flag for the specified language if supported */
   const char* GetSONameFlag(const std::string& language) const;
 
