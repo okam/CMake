@@ -4,29 +4,22 @@
 #define CM_UNORDERED_MAP_HXX
 
 #include <cmConfigure.h>
-#include <cstddef>
 
-#if defined(__GLIBCXX__) && (__GLIBCXX__ < 20080306 || __cplusplus < 201103L)
-#include <tr1/unordered_map>
-#else
+#if defined(CMake_HAVE_CXX_UNORDERED_MAP)
+
 #include <unordered_map>
-#endif
+#define CM_UNORDERED_MAP std::unordered_map
 
-namespace cm {
+#elif defined(CMAKE_BUILD_WITH_CMAKE)
 
-#if (defined(_CPPLIB_VER) && _CPPLIB_VER < 520) ||                            \
-  (defined(__GLIBCXX__) && (__GLIBCXX__ < 20080306 || __cplusplus < 201103L))
-
-using namespace std::tr1;
+#include <cmsys/hash_map.hxx>
+#define CM_UNORDERED_MAP cmsys::hash_map
 
 #else
 
-using namespace std;
+#include <map>
+#define CM_UNORDERED_MAP std::map
 
 #endif
-
-} // end namespace cm
-
-#define CM_UNORDERED_MAP cm::unordered_map
 
 #endif

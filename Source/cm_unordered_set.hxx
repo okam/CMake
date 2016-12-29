@@ -4,29 +4,22 @@
 #define CM_UNORDERED_SET_HXX
 
 #include <cmConfigure.h>
-#include <cstddef>
 
-#if defined(__GLIBCXX__) && (__GLIBCXX__ < 20080306 || __cplusplus < 201103L)
-#include <tr1/unordered_set>
-#else
+#if defined(CMake_HAVE_CXX_UNORDERED_SET)
+
 #include <unordered_set>
-#endif
+#define CM_UNORDERED_SET std::unordered_set
 
-namespace cm {
+#elif defined(CMAKE_BUILD_WITH_CMAKE)
 
-#if (defined(_CPPLIB_VER) && _CPPLIB_VER < 520) ||                            \
-  (defined(__GLIBCXX__) && (__GLIBCXX__ < 20080306 || __cplusplus < 201103L))
-
-using namespace std::tr1;
+#include <cmsys/hash_set.hxx>
+#define CM_UNORDERED_SET cmsys::hash_set
 
 #else
 
-using namespace std;
+#include <set>
+#define CM_UNORDERED_SET std::set
 
 #endif
-
-} // end namespace cm
-
-#define CM_UNORDERED_SET cm::unordered_set
 
 #endif
