@@ -46,6 +46,9 @@ Generators
   :variable:`CMAKE_CODELITE_USE_TARGETS` option
   to change project creation from projects to targets.
 
+* The :generator:`CodeBlocks` now can generate with
+  :generator:`NMake Makefiles JOM`.
+
 Commands
 --------
 
