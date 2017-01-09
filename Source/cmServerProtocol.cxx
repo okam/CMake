@@ -735,7 +735,7 @@ static Json::Value DumpTarget(cmGeneratorTarget* target,
   result[kSOURCE_DIRECTORY_KEY] = lg->GetCurrentSourceDirectory();
   result[kBUILD_DIRECTORY_KEY] = lg->GetCurrentBinaryDirectory();
 
-  if (type == cmState::INTERFACE_LIBRARY) {
+  if (type == cmStateEnums::INTERFACE_LIBRARY) {
     return result;
   }
 
