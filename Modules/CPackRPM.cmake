@@ -2470,11 +2470,12 @@ Vendor:         \@CPACK_RPM_PACKAGE_VENDOR\@
       endforeach()
     endif()
 
+    set(RPMBUILD_FLAGS "-bb")
+
     # We should generate a USER spec file template:
     #  - either because the user asked for it : CPACK_RPM_GENERATE_USER_BINARY_SPECFILE_TEMPLATE
     #  - or the user did not provide one : NOT CPACK_RPM_USER_BINARY_SPECFILE
     if(CPACK_RPM_GENERATE_USER_BINARY_SPECFILE_TEMPLATE OR NOT CPACK_RPM_USER_BINARY_SPECFILE)
-      set(RPMBUILD_FLAGS "-bb")
 
       file(WRITE ${CPACK_RPM_BINARY_SPECFILE}.in
         "# -*- rpm-spec -*-
