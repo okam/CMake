@@ -1,5 +1,5 @@
 
-int main(int, char**)
+int getAutoTypeImpl()
 {
   auto i = 0;
   return i;

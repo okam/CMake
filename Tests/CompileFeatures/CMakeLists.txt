@@ -278,7 +278,7 @@ if (CMAKE_CXX_COMPILE_FEATURES)
 
   add_executable(CompileFeatures main.cpp)
   set_property(TARGET CompileFeatures
-    PROPERTY COMPILE_FEATURES "cxx_long_long_type"
+    PROPERTY COMPILE_FEATURES "cxx_auto_type"
   )
   set_property(TARGET CompileFeatures
     PROPERTY CXX_STANDARD_REQUIRED TRUE
@@ -291,7 +291,7 @@ if (CMAKE_CXX_COMPILE_FEATURES)
 
   add_library(iface INTERFACE)
   set_property(TARGET iface
-    PROPERTY INTERFACE_COMPILE_FEATURES "cxx_long_long_type"
+    PROPERTY INTERFACE_COMPILE_FEATURES "cxx_auto_type"
   )
   add_executable(IfaceCompileFeatures main.cpp)
   target_link_libraries(IfaceCompileFeatures iface)
