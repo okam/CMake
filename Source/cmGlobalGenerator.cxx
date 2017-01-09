@@ -2342,8 +2342,8 @@ void cmGlobalGenerator::AddGlobalTarget_Install(
     singleLine.push_back(cmd);
     if (cmakeCfgIntDir && *cmakeCfgIntDir && cmakeCfgIntDir[0] != '.') {
       std::string cfgArg = "-DBUILD_TYPE=";
-      bool useEPN = mf->ShouldEmitEffectivePlatformName();
-      if (useEPN) {
+      bool iosPlatform = mf->PlatformIsAppleIos();
+      if (iosPlatform) {
         cfgArg += "$(CONFIGURATION)";
         singleLine.push_back(cfgArg);
         cfgArg = "-DEFFECTIVE_PLATFORM_NAME=$(EFFECTIVE_PLATFORM_NAME)";
