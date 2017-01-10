@@ -602,7 +602,7 @@ bool cmCTestMemCheckHandler::InitializeMemoryChecking()
       if (this->MemoryTesterStyle ==
           cmCTestMemCheckHandler::ADDRESS_SANITIZER) {
         envVar = "ASAN_OPTIONS";
-        extraOptions = "detect_leaks=1 " + extraOptions;
+        extraOptions += " detect_leaks=1";
       } else if (this->MemoryTesterStyle ==
                  cmCTestMemCheckHandler::THREAD_SANITIZER) {
         envVar = "TSAN_OPTIONS";
