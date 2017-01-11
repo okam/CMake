@@ -32,6 +32,9 @@
 #ifndef _Reserved_
 #define _Reserved_
 #endif
+#ifndef MAXUINT
+#define MAXUINT     ((UINT)~((UINT)0))
+#endif
 
 // Enumerations
 //
