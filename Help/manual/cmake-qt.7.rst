@@ -152,10 +152,10 @@ result of linking with the :prop_tgt:`IMPORTED` target:
     Qt5::Widgets
   )
 
-.. _`Qt AUTORCC`:
-
 Source files can be excluded from :prop_tgt:`AUTOUIC` processing by
 enabling :prop_sf:`SKIP_AUTOUIC` or the broader :prop_sf:`SKIP_AUTOGEN`.
+
+.. _`Qt AUTORCC`:
 
 AUTORCC
 ^^^^^^^
