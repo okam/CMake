@@ -241,7 +241,7 @@ bool cmSourceGroupCommand::processTree(const std::vector<std::string>& args,
                             errorMsg);
 
   if (!errorMsg.empty()) {
-    this->SetError(errorMsg.c_str());
+    this->SetError(errorMsg);
     return false;
   }
 
