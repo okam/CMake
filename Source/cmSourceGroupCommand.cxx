@@ -72,8 +72,8 @@ bool addFilesToItsSourceGroups(const std::set<std::string>& sgFilesPaths,
 {
   cmSourceGroup* sg;
 
-  for (std::set<std::string>::const_iterator it = std::begin(sgFilesPaths);
-       it != std::end(sgFilesPaths); ++it) {
+  for (std::set<std::string>::const_iterator it = sgFilesPaths.begin();
+       it != sgFilesPaths.end(); ++it) {
 
     std::vector<std::string> tokenizedPath;
     if (!prefix.empty()) {
@@ -231,8 +231,8 @@ bool cmSourceGroupCommand::processTree(const std::vector<std::string>& args,
     filesBegin = FilesWithPrefixKeywordIndex + 1;
   }
 
-  const std::vector<std::string> filesVector(args.cbegin() + filesBegin,
-                                             args.cend());
+  const std::vector<std::string> filesVector(args.begin() + filesBegin,
+                                             args.end());
 
   std::set<std::string> sourceGroupPaths = getSourceGroupFilesPaths(
     this->Makefile->GetCurrentSourceDirectory(), root, filesVector);
