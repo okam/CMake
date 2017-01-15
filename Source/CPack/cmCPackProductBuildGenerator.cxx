@@ -75,14 +75,27 @@ int cmCPackProductBuildGenerator::PackageFiles()
 
   std::string version = this->GetOption("CPACK_PACKAGE_VERSION");
   std::string productbuild = this->GetOption("CPACK_COMMAND_PRODUCTBUILD");
+  std::string identityName =
+    this->GetOption("CPACK_PRODUCTBUILD_IDENTITY_NAME");
+  std::string keychainPath =
+    this->GetOption("CPACK_PRODUCTBUILD_KEYCHAIN_PATH");
 
   pkgCmd << productbuild << " --distribution \"" << packageDirFileName
          << "/Contents/distribution.dist\""
          << " --package-path \"" << packageDirFileName << "/Contents/Packages"
          << "\""
          << " --resources \"" << resDir << "\""
-         << " --version \"" << version << "\""
-         << " \"" << packageFileNames[0] << "\"";
+         << " --version \"" << version << "\"";
+
+  if (!identityName.empty()) {
+    pkgCmd << " --sign \"" << identityName << "\"";
+  }
+
+  if (!keychainPath.empty()) {
+    pkgCmd << " --keychain \"" << keychainPath << "\"";
+  }
+
+  pkgCmd << " \"" << packageFileNames[0] << "\"";
 
   // Run ProductBuild
   return RunProductBuild(pkgCmd.str());
@@ -193,13 +206,24 @@ bool cmCPackProductBuildGenerator::GenerateComponentPackage(
 
   std::string version = this->GetOption("CPACK_PACKAGE_VERSION");
   std::string pkgbuild = this->GetOption("CPACK_COMMAND_PKGBUILD");
+  std::string identityName = this->GetOption("CPACK_PKGBUILD_IDENTITY_NAME");
+  std::string keychainPath = this->GetOption("CPACK_PKGBUILD_KEYCHAIN_PATH");
 
   pkgCmd << pkgbuild << " --root \"" << packageDir << "\""
          << " --identifier \"" << pkgId << "\""
          << " --scripts \"" << scriptDir << "\""
          << " --version \"" << version << "\""
-         << " --install-location \"/\""
-         << " \"" << packageFile << "\"";
+         << " --install-location \"/\"";
+
+  if (!identityName.empty()) {
+    pkgCmd << " --sign \"" << identityName << "\"";
+  }
+
+  if (!keychainPath.empty()) {
+    pkgCmd << " --keychain \"" << keychainPath << "\"";
+  }
+
+  pkgCmd << " \"" << packageFile << "\"";
 
   // Run ProductBuild
   return RunProductBuild(pkgCmd.str());
