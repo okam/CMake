@@ -1,0 +1,2 @@
+Done processing .*Tests[/\]RunCMake[/\]Cpplint[/\]main\.c
+Total errors found: 0
