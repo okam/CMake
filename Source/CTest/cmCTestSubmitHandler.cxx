@@ -1093,7 +1093,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
                                                        << " seconds...\n",
                          this->Quiet);
 
-      double stop = cmSystemTools::GetTime() + retryDelay;
+      double stop = cmSystemTools::GetTime() + static_cast<double>(retryDelay);
       while (cmSystemTools::GetTime() < stop) {
         cmSystemTools::Delay(100);
       }
@@ -1167,7 +1167,7 @@ int cmCTestSubmitHandler::HandleCDashUploadFile(std::string const& file,
                                                       << " seconds...\n",
                          this->Quiet);
 
-      double stop = cmSystemTools::GetTime() + retryDelay;
+      double stop = cmSystemTools::GetTime() + static_cast<double>(retryDelay);
       while (cmSystemTools::GetTime() < stop) {
         cmSystemTools::Delay(100);
       }
