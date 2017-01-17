@@ -276,8 +276,7 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
     if (args[1] == "__run_iwyu") {
       if (args.size() < 3) {
         std::cerr << "__run_iwyu Usage: -E __run_iwyu [--iwyu=/path/iwyu]"
-                     " [--cpplint=/path/cpplint] [--tidy=/path/tidy]"
-                     " -- compile command\n";
+                     " [--tidy=/path/tidy] -- compile command\n";
         return 1;
       }
       bool doing_options = true;
@@ -286,7 +285,6 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
       std::string tidy;
       std::string sourceFile;
       std::string lwyu;
-      std::string cpplint;
       for (std::string::size_type cc = 2; cc < args.size(); cc++) {
         std::string const& arg = args[cc];
         if (arg == "--") {
@@ -299,8 +297,6 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
           sourceFile = arg.substr(9);
         } else if (doing_options && cmHasLiteralPrefix(arg, "--lwyu=")) {
           lwyu = arg.substr(7);
-        } else if (doing_options && cmHasLiteralPrefix(arg, "--cpplint=")) {
-          cpplint = arg.substr(10);
         } else if (doing_options) {
           std::cerr << "__run_iwyu given unknown argument: " << arg << "\n";
           return 1;
@@ -308,14 +304,12 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
           orig_cmd.push_back(arg);
         }
       }
-      if (tidy.empty() && iwyu.empty() && lwyu.empty() && cpplint.empty()) {
-        std::cerr << "__run_iwyu missing --cpplint=, --iwyu=, --lwyu=, and/or"
-                     " --tidy=\n";
+      if (tidy.empty() && iwyu.empty() && lwyu.empty()) {
+        std::cerr << "__run_iwyu missing --tidy= or --iwyu=\n";
         return 1;
       }
-      if ((!cpplint.empty() || !tidy.empty()) && sourceFile.empty()) {
-        std::cerr << "__run_iwyu --cpplint= and/or __run_iwyu --tidy="
-                     " require --source=\n";
+      if (!tidy.empty() && sourceFile.empty()) {
+        std::cerr << "__run_iwyu --tidy= requires --source=\n";
         return 1;
       }
       if (orig_cmd.empty() && lwyu.empty()) {
@@ -409,32 +403,6 @@ int cmcmd::ExecuteCMakeCommand(std::vector<std::string>& args)
           std::cerr << "Warning: " << stdOut;
         }
       }
-
-      if (!cpplint.empty()) {
-        // Construct the cpplint command line.
-        std::vector<std::string> cpplint_cmd;
-        cmSystemTools::ExpandListArgument(cpplint, cpplint_cmd, true);
-        cpplint_cmd.push_back(sourceFile);
-
-        // Run the cpplint command line.  Capture its output.
-        std::string stdOut;
-        if (!cmSystemTools::RunSingleCommand(cpplint_cmd, &stdOut, &stdOut,
-                                             &ret, CM_NULLPTR,
-                                             cmSystemTools::OUTPUT_NONE)) {
-          std::cerr << "Error running '" << cpplint_cmd[0] << "': " << stdOut
-                    << "\n";
-          return 1;
-        }
-
-        // Output the output from cpplint to stderr
-        std::cerr << stdOut;
-
-        // If cpplint exited with an error do the same.
-        if (ret != 0) {
-          return ret;
-        }
-      }
-
       ret = 0;
       // Now run the real compiler command and return its result value.
       if (lwyu.empty() &&
