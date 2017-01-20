@@ -5,8 +5,21 @@ function(getPackageContent FILE RESULT_VAR)
   file(REMOVE_RECURSE "${path_}/content")
   file(MAKE_DIRECTORY "${path_}/content")
   execute_process(COMMAND ${FILE} --prefix=${path_}/content --include-subdir
-          ERROR_QUIET
+          RESULT_VARIABLE extract_result_
+          ERROR_VARIABLE extract_error_
           OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  if(extract_result_)
+    find_program(TAIL_EXECUTABLE tail)
+    find_program(PAX_EXECUTABLE pax)
+    find_program(GTAR_EXECUTABLE gtar)
+    find_program(TAR_EXECUTABLE tar)
+    find_program(GUNZIP_EXECUTABLE gunzip)
+
+    message(FATAL_ERROR "Extracting STGZ archive failed: '${extract_error_}';"
+        "'${TAIL_EXECUTABLE}'; '${PAX_EXECUTABLE}'; '${GTAR_EXECUTABLE}';"
+        "'${TAR_EXECUTABLE}'; '${GUNZIP_EXECUTABLE}'")
+  endif()
 
   file(GLOB_RECURSE package_content_ LIST_DIRECTORIES true RELATIVE
       "${path_}/content" "${path_}/content/*")
