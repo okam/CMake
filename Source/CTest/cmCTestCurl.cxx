@@ -19,7 +19,6 @@ cmCTestCurl::cmCTestCurl(cmCTest* ctest)
   // default is to verify https
   this->VerifyPeerOff = false;
   this->VerifyHostOff = false;
-  this->Quiet = false;
   this->TimeOutSeconds = 0;
   this->Curl = curl_easy_init();
 }
@@ -97,13 +96,6 @@ bool cmCTestCurl::InitCurl()
   }
   // enable HTTP ERROR parsing
   curl_easy_setopt(this->Curl, CURLOPT_FAILONERROR, 1);
-
-  // if there is little to no activity for too long stop submitting
-  if (this->TimeOutSeconds) {
-    curl_easy_setopt(this->Curl, CURLOPT_LOW_SPEED_LIMIT, 1);
-    curl_easy_setopt(this->Curl, CURLOPT_LOW_SPEED_TIME, this->TimeOutSeconds);
-  }
-
   return true;
 }
 
@@ -118,7 +110,12 @@ bool cmCTestCurl::UploadFile(std::string const& local_file,
   }
   /* enable uploading */
   curl_easy_setopt(this->Curl, CURLOPT_UPLOAD, 1);
-
+  // if there is little to no activity for too long stop submitting
+  if (this->TimeOutSeconds) {
+    ::curl_easy_setopt(this->Curl, CURLOPT_LOW_SPEED_LIMIT, 1);
+    ::curl_easy_setopt(this->Curl, CURLOPT_LOW_SPEED_TIME,
+                       this->TimeOutSeconds);
+  }
   /* HTTP PUT please */
   ::curl_easy_setopt(this->Curl, CURLOPT_PUT, 1);
   ::curl_easy_setopt(this->Curl, CURLOPT_VERBOSE, 1);
@@ -160,14 +157,13 @@ bool cmCTestCurl::UploadFile(std::string const& local_file,
 
   if (!responseData.empty()) {
     response = std::string(responseData.begin(), responseData.end());
-    cmCTestOptionalLog(this->CTest, HANDLER_VERBOSE_OUTPUT,
-                       "Curl response: [" << response << "]\n", this->Quiet);
+    cmCTestLog(this->CTest, HANDLER_VERBOSE_OUTPUT, "Curl response: ["
+                 << response << "]\n");
   }
   std::string curlDebug;
   if (!debugData.empty()) {
     curlDebug = std::string(debugData.begin(), debugData.end());
-    cmCTestOptionalLog(this->CTest, DEBUG,
-                       "Curl debug: [" << curlDebug << "]\n", this->Quiet);
+    cmCTestLog(this->CTest, DEBUG, "Curl debug: [" << curlDebug << "]\n");
   }
   if (response.empty()) {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "No response from server.\n"
@@ -181,10 +177,9 @@ bool cmCTestCurl::HttpRequest(std::string const& url,
                               std::string const& fields, std::string& response)
 {
   response = "";
-  cmCTestOptionalLog(this->CTest, DEBUG, "HttpRequest\n"
-                       << "url: " << url << "\n"
-                       << "fields " << fields << "\n",
-                     this->Quiet);
+  cmCTestLog(this->CTest, DEBUG, "HttpRequest\n"
+               << "url: " << url << "\n"
+               << "fields " << fields << "\n");
   if (!this->InitCurl()) {
     cmCTestLog(this->CTest, ERROR_MESSAGE, "Initialization of curl failed");
     return false;
@@ -207,16 +202,13 @@ bool cmCTestCurl::HttpRequest(std::string const& url,
 
   if (!responseData.empty()) {
     response = std::string(responseData.begin(), responseData.end());
-    cmCTestOptionalLog(this->CTest, DEBUG,
-                       "Curl response: [" << response << "]\n", this->Quiet);
+    cmCTestLog(this->CTest, DEBUG, "Curl response: [" << response << "]\n");
   }
   if (!debugData.empty()) {
     std::string curlDebug = std::string(debugData.begin(), debugData.end());
-    cmCTestOptionalLog(this->CTest, DEBUG,
-                       "Curl debug: [" << curlDebug << "]\n", this->Quiet);
+    cmCTestLog(this->CTest, DEBUG, "Curl debug: [" << curlDebug << "]\n");
   }
-  cmCTestOptionalLog(this->CTest, DEBUG, "Curl res: " << res << "\n",
-                     this->Quiet);
+  cmCTestLog(this->CTest, DEBUG, "Curl res: " << res << "\n");
   return (res == 0);
 }
 
