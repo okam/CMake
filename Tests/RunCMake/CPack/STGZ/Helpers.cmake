@@ -10,15 +10,8 @@ function(getPackageContent FILE RESULT_VAR)
           OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   if(extract_result_)
-    find_program(TAIL_EXECUTABLE tail)
-    find_program(PAX_EXECUTABLE pax)
-    find_program(GTAR_EXECUTABLE gtar)
-    find_program(TAR_EXECUTABLE tar)
-    find_program(GUNZIP_EXECUTABLE gunzip)
-
-    message(FATAL_ERROR "Extracting STGZ archive failed: '${extract_error_}';"
-        "'${TAIL_EXECUTABLE}'; '${PAX_EXECUTABLE}'; '${GTAR_EXECUTABLE}';"
-        "'${TAR_EXECUTABLE}'; '${GUNZIP_EXECUTABLE}'")
+    message(FATAL_ERROR "Extracting STGZ archive failed: '${extract_result_}';"
+          " '${extract_error_}'.")
   endif()
 
   file(GLOB_RECURSE package_content_ LIST_DIRECTORIES true RELATIVE
