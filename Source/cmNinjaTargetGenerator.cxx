@@ -600,9 +600,7 @@ void cmNinjaTargetGenerator::WriteCompileRule(const std::string& lang)
     const char* iwyu = this->GeneratorTarget->GetProperty(iwyu_prop);
     std::string const tidy_prop = lang + "_CLANG_TIDY";
     const char* tidy = this->GeneratorTarget->GetProperty(tidy_prop);
-    std::string const cpplint_prop = lang + "_CPPLINT";
-    const char* cpplint = this->GeneratorTarget->GetProperty(cpplint_prop);
-    if ((iwyu && *iwyu) || (tidy && *tidy) || (cpplint && *cpplint)) {
+    if ((iwyu && *iwyu) || (tidy && *tidy)) {
       std::string run_iwyu = this->GetLocalGenerator()->ConvertToOutputFormat(
         cmSystemTools::GetCMakeCommand(), cmOutputConverter::SHELL);
       run_iwyu += " -E __run_iwyu";
@@ -613,12 +611,6 @@ void cmNinjaTargetGenerator::WriteCompileRule(const std::string& lang)
       if (tidy && *tidy) {
         run_iwyu += " --tidy=";
         run_iwyu += this->GetLocalGenerator()->EscapeForShell(tidy);
-      }
-      if (cpplint && *cpplint) {
-        run_iwyu += " --cpplint=";
-        run_iwyu += this->GetLocalGenerator()->EscapeForShell(cpplint);
-      }
-      if ((tidy && *tidy) || (cpplint && *cpplint)) {
         run_iwyu += " --source=$in";
       }
       run_iwyu += " -- ";
