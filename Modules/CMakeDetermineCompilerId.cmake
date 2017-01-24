@@ -24,21 +24,16 @@ function(CMAKE_DETERMINE_COMPILER_ID lang flagvar src)
 
   # Try building with no extra flags and then try each set
   # of helper flags.  Stop when the compiler is identified.
-  foreach(userflags "${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}" "")
-    foreach(testflags ${CMAKE_${lang}_COMPILER_ID_TEST_FLAGS_FIRST}
-                      ""
-                      ${CMAKE_${lang}_COMPILER_ID_TEST_FLAGS})
-      CMAKE_DETERMINE_COMPILER_ID_BUILD("${lang}" "${testflags}" "${userflags}" "${src}")
-      CMAKE_DETERMINE_COMPILER_ID_MATCH_VENDOR("${lang}" "${COMPILER_${lang}_PRODUCED_OUTPUT}")
-      if(CMAKE_${lang}_COMPILER_ID)
-        break()
-      endif()
-      foreach(file ${COMPILER_${lang}_PRODUCED_FILES})
-        CMAKE_DETERMINE_COMPILER_ID_CHECK("${lang}" "${CMAKE_${lang}_COMPILER_ID_DIR}/${file}" "${src}")
-      endforeach()
-      if(CMAKE_${lang}_COMPILER_ID)
-        break()
-      endif()
+  foreach(flags ${CMAKE_${lang}_COMPILER_ID_TEST_FLAGS_FIRST}
+                ""
+                ${CMAKE_${lang}_COMPILER_ID_TEST_FLAGS})
+    CMAKE_DETERMINE_COMPILER_ID_BUILD("${lang}" "${flags}" "${src}")
+    CMAKE_DETERMINE_COMPILER_ID_MATCH_VENDOR("${lang}" "${COMPILER_${lang}_PRODUCED_OUTPUT}")
+    if(CMAKE_${lang}_COMPILER_ID)
+      break()
+    endif()
+    foreach(file ${COMPILER_${lang}_PRODUCED_FILES})
+      CMAKE_DETERMINE_COMPILER_ID_CHECK("${lang}" "${CMAKE_${lang}_COMPILER_ID_DIR}/${file}" "${src}")
     endforeach()
     if(CMAKE_${lang}_COMPILER_ID)
       break()
@@ -47,9 +42,7 @@ function(CMAKE_DETERMINE_COMPILER_ID lang flagvar src)
 
   # If the compiler is still unknown, try to query its vendor.
   if(CMAKE_${lang}_COMPILER AND NOT CMAKE_${lang}_COMPILER_ID)
-    foreach(userflags "${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}" "")
-      CMAKE_DETERMINE_COMPILER_ID_VENDOR(${lang} "${userflags}")
-    endforeach()
+    CMAKE_DETERMINE_COMPILER_ID_VENDOR(${lang})
   endif()
 
   if (COMPILER_QNXNTO AND CMAKE_${lang}_COMPILER_ID STREQUAL "GNU")
@@ -73,9 +66,7 @@ function(CMAKE_DETERMINE_COMPILER_ID lang flagvar src)
   endif()
 
   if(CMAKE_GENERATOR STREQUAL "Ninja" AND MSVC_${lang}_ARCHITECTURE_ID)
-    foreach(userflags "${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}" "")
-      CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX(${lang} "${userflags}")
-    endforeach()
+    CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX(${lang})
   else()
     set(CMAKE_${lang}_CL_SHOWINCLUDES_PREFIX "")
   endif()
@@ -136,7 +127,7 @@ endfunction()
 #-----------------------------------------------------------------------------
 # Function to build the compiler id source file and look for output
 # files.
-function(CMAKE_DETERMINE_COMPILER_ID_BUILD lang testflags userflags src)
+function(CMAKE_DETERMINE_COMPILER_ID_BUILD lang testflags src)
   # Create a clean working directory.
   file(REMOVE_RECURSE ${CMAKE_${lang}_COMPILER_ID_DIR})
   file(MAKE_DIRECTORY ${CMAKE_${lang}_COMPILER_ID_DIR})
@@ -146,7 +137,7 @@ function(CMAKE_DETERMINE_COMPILER_ID_BUILD lang testflags userflags src)
   # Construct a description of this test case.
   set(COMPILER_DESCRIPTION
     "Compiler: ${CMAKE_${lang}_COMPILER} ${CMAKE_${lang}_COMPILER_ID_ARG1}
-Build flags: ${userflags}
+Build flags: ${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}
 Id flags: ${testflags} ${CMAKE_${lang}_COMPILER_ID_FLAGS_ALWAYS}
 ")
 
@@ -336,7 +327,7 @@ Id flags: ${testflags} ${CMAKE_${lang}_COMPILER_ID_FLAGS_ALWAYS}
     execute_process(
       COMMAND "${CMAKE_${lang}_COMPILER}"
               ${CMAKE_${lang}_COMPILER_ID_ARG1}
-              ${userflags}
+              ${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}
               ${testflags}
               ${CMAKE_${lang}_COMPILER_ID_FLAGS_ALWAYS}
               "${src}"
@@ -624,7 +615,7 @@ endfunction()
 #   set(CMAKE_${lang}_COMPILER_ID_VENDOR_REGEX_${vendor} "Some Vendor Output")
 # We try running the compiler with the flag for each vendor and
 # matching its regular expression in the output.
-function(CMAKE_DETERMINE_COMPILER_ID_VENDOR lang userflags)
+function(CMAKE_DETERMINE_COMPILER_ID_VENDOR lang)
 
   if(NOT CMAKE_${lang}_COMPILER_ID_DIR)
     # We get here when this function is called not from within CMAKE_DETERMINE_COMPILER_ID()
@@ -642,7 +633,7 @@ function(CMAKE_DETERMINE_COMPILER_ID_VENDOR lang userflags)
     execute_process(
       COMMAND "${CMAKE_${lang}_COMPILER}"
       ${CMAKE_${lang}_COMPILER_ID_ARG1}
-      ${userflags}
+      ${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}
       ${flags}
       WORKING_DIRECTORY ${CMAKE_${lang}_COMPILER_ID_DIR}
       OUTPUT_VARIABLE output ERROR_VARIABLE output
@@ -670,7 +661,7 @@ function(CMAKE_DETERMINE_COMPILER_ID_VENDOR lang userflags)
   endforeach()
 endfunction()
 
-function(CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX lang userflags)
+function(CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX lang)
   # Run this MSVC-compatible compiler to detect what the /showIncludes
   # option displays.  We can use a C source even with the C++ compiler
   # because MSVC-compatible compilers handle both and show the same output.
@@ -680,7 +671,7 @@ function(CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX lang userflags)
   execute_process(
     COMMAND "${CMAKE_${lang}_COMPILER}"
             ${CMAKE_${lang}_COMPILER_ID_ARG1}
-            ${userflags}
+            ${CMAKE_${lang}_COMPILER_ID_FLAGS_LIST}
             /nologo /showIncludes /c main.c
     WORKING_DIRECTORY ${showdir}
     OUTPUT_VARIABLE out
