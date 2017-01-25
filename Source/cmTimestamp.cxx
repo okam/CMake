@@ -5,6 +5,7 @@
 #include <cmConfigure.h>
 #include <cstring>
 #include <sstream>
+#include <stdlib.h>
 
 #include "cmSystemTools.h"
 
