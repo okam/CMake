@@ -5,7 +5,6 @@
 #include <cmConfigure.h>
 #include <cstring>
 #include <sstream>
-#include <stdlib.h>
 
 #include "cmSystemTools.h"
 
@@ -13,16 +12,6 @@ std::string cmTimestamp::CurrentTime(const std::string& formatString,
                                      bool utcFlag)
 {
   time_t currentTimeT = time(CM_NULLPTR);
-  std::string source_date_epoch;
-  cmSystemTools::GetEnv("SOURCE_DATE_EPOCH", source_date_epoch);
-  if (!source_date_epoch.empty()) {
-    std::istringstream iss(source_date_epoch);
-    iss >> currentTimeT;
-    if (iss.fail() || !iss.eof()) {
-      cmSystemTools::Error("Error parsing SOURCE_DATE_EPOCH as int");
-      exit(27);
-    }
-  }
   if (currentTimeT == time_t(-1)) {
     return std::string();
   }
