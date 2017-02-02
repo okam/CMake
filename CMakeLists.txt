@@ -261,8 +261,7 @@ macro (CMAKE_BUILD_UTILITIES)
   set(KWSYS_INSTALL_DOC_DIR "${CMAKE_DOC_DIR}")
   add_subdirectory(Source/kwsys)
   set(kwsys_folder "Utilities/KWSys")
-  CMAKE_SET_TARGET_FOLDER(${
-  KWSYS_NAMESPACE} "${kwsys_folder}")
+  CMAKE_SET_TARGET_FOLDER(${KWSYS_NAMESPACE} "${kwsys_folder}")
   CMAKE_SET_TARGET_FOLDER(${KWSYS_NAMESPACE}_c "${kwsys_folder}")
   if(BUILD_TESTING)
     CMAKE_SET_TARGET_FOLDER(${KWSYS_NAMESPACE}TestDynload "${kwsys_folder}")
@@ -664,8 +663,7 @@ if(NOT CMake_TEST_EXTERNAL_CMAKE)
   CMAKE_BUILD_UTILITIES()
 
 #On NetBSD ncurses is required, since curses doesn't have the wsyncup()
-#function.ncurses is installed via pkgsrc,                                    \
-  so the library is in / usr / pkg / lib,
+#function.ncurses is installed via pkgsrc, so the library is in / usr / pkg / lib,
 #which isn't in the default linker search path. So without RPATH ccmake
 #doesn 't run and the build doesn' t succeed since ccmake is executed for
 #generating the documentation.
